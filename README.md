@@ -1,8 +1,10 @@
-Projeto backend do EcoEngineers (Node.js + Express + PostgreSQL)
+Projeto backend do EcoEngineers (Node.js + Express + PostgreSQL/MySQL)
 
 Instruções rápidas:
 
 1. Copie .env.example para .env e adapte DATABASE_URL e JWT_SECRET.
+	Opcional: defina DB_SCHEMA quando as tabelas do professor estiverem em outro schema.
+	Opcional: defina DB_SSL=true quando o banco exigir SSL.
 2. Instale dependências: npm install
 3. Crie o banco de dados PostgreSQL e rode o script db/init.sql (psql -f db/init.sql)
 4. Rode em dev: npm run dev
@@ -18,21 +20,13 @@ Endpoints principais:
 
 Token JWT deve ser enviado em Authorization: Bearer <token>
 
-Suporte a diferentes bancos SQL:
+Variáveis de ambiente atuais:
 
-Você pode usar Postgres, MySQL ou MSSQL. Ajuste a variável DB_CLIENT no seu .env para uma destas opções e configure DATABASE_URL adequadamente.
-
-Drivers recomendados por DB_CLIENT:
-- postgres: "pg"
-- mysql: "mysql2"
-- mssql: "mssql"
-
-Exemplo .env para MySQL:
-
-DATABASE_URL=mysql://user:password@localhost:3306/ecoengineers
-DB_CLIENT=mysql
-
-Ao trocar para outro banco, instale o pacote driver correspondente: npm i mysql2  (para MySQL) ou npm i mssql (para MSSQL).
+- DB_CLIENT=mysql (ou postgres)
+- DATABASE_URL=mysql://user:pass@host:3306/dbname
+- JWT_SECRET=chave-secreta-forte
+- DB_SCHEMA=public
+- DB_SSL=false
 
 Quer publicar no Git?
 
