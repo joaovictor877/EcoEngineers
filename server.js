@@ -22,6 +22,23 @@ function authMiddleware(req, res, next) {
   }
 }
 
+app.get('/', (req, res) => {
+  res.json({
+    name: 'EcoEngineers API',
+    status: 'ok',
+    health: '/api/health',
+    endpoints: [
+      'POST /api/register',
+      'POST /api/login',
+      'GET /api/materials',
+      'POST /api/materials',
+      'GET /api/wastes',
+      'POST /api/wastes',
+      'GET /api/dashboard/stats'
+    ]
+  });
+});
+
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
@@ -116,6 +133,10 @@ app.get('/api/dashboard/stats', authMiddleware, async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Failed to compute dashboard stats' });
   }
+});
+
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
 });
 
 const port = process.env.PORT || 4000;
