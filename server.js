@@ -1,6 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
 const { Pool } = require('pg');
 const mysql = require('mysql2/promise');
 const bcrypt = require('bcrypt');
@@ -79,20 +81,7 @@ function authMiddleware(req, res, next) {
 }
 
 app.get('/', (req, res) => {
-  res.json({
-    name: 'EcoEngineers API',
-    status: 'ok',
-    health: '/api/health',
-    endpoints: [
-      'POST /api/register',
-      'POST /api/login',
-      'GET /api/materials',
-      'POST /api/materials',
-      'GET /api/wastes',
-      'POST /api/wastes',
-      'GET /api/dashboard/stats'
-    ]
-  });
+  res.redirect('/app');
 });
 
 // Health check
@@ -218,6 +207,27 @@ app.get('/api/dashboard/stats', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Failed to compute dashboard stats' });
   }
 });
+
+const distDir = path.join(__dirname, 'dist');
+const distIndex = path.join(distDir, 'index.html');
+const hasFrontendBuild = fs.existsSync(distIndex);
+
+if (hasFrontendBuild) {
+  app.use(express.static(distDir));
+
+  app.get('/app', (req, res) => {
+    res.sendFile(distIndex);
+  });
+
+  app.get('/app/*', (req, res) => {
+    res.sendFile(distIndex);
+  });
+
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api/')) return next();
+    res.sendFile(distIndex);
+  });
+}
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
